@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -73,7 +73,6 @@ namespace Lab11
                     dataGridView1.Columns["IMG"].Visible = false;
                 }
 
-                // ПОВНИЙ ЗАХИСТ ВІД РУЧНОГО ВВЕДЕННЯ: Робимо всі поля доступними тільки для читання
                 txtBox1.ReadOnly = true;
                 txtBox2.ReadOnly = true;
                 txtBox3.ReadOnly = true;
@@ -239,7 +238,6 @@ namespace Lab11
             UpdateUniversityLogo();
         }
 
-        // ОНОВЛЕНИЙ СКРІЗНИЙ ПОШУК ДАНИХ
         private void UpdateUniversityLogo()
         {
             if (dataGridView1.CurrentRow == null || dataGridView1.CurrentRow.IsNewRow)
@@ -255,7 +253,6 @@ namespace Lab11
                 string ownership = "";
                 string imageName = "";
 
-                // 1. Отримуємо назву університету з поточного рядка DataGridView (назва колонки залежить від режиму)
                 if (currentTableMode == 0)
                 {
                     uniName = dataGridView1.CurrentRow.Cells["UniName"].Value?.ToString();
@@ -265,33 +262,28 @@ namespace Lab11
                     uniName = dataGridView1.CurrentRow.Cells["Університет"].Value?.ToString();
                 }
 
-                // 2. Розумний пошук: шукаємо оригінальний повний рядок у tableUniversities за назвою закладу
                 if (!string.IsNullOrEmpty(uniName))
                 {
                     DataRow[] rows = tableUniversities.Select($"UniName = '{uniName.Replace("'", "''")}'");
                     if (rows.Length > 0)
                     {
-                        // Якщо знайшли — витягуємо абсолютно всі дані, навіть якщо ми у вікні звітів!
                         city = rows[0]["City"]?.ToString();
                         ownership = rows[0]["Ownership"]?.ToString();
                         imageName = rows[0]["IMG"]?.ToString();
                     }
                 }
 
-                // Якщо через пошук по базі назва зображення порожня, пробуємо взяти напряму з гріда як запасний варіант
                 if (string.IsNullOrEmpty(imageName))
                 {
                     if (dataGridView1.Columns.Contains("IMG")) imageName = dataGridView1.CurrentRow.Cells["IMG"].Value?.ToString();
                     if (string.IsNullOrEmpty(imageName)) imageName = txtBox4.Text;
                 }
 
-                // 3. Синхронно заповнюємо всі текстові поля програми
                 txtBox1.Text = uniName;
                 txtBox2.Text = city;
                 txtBox3.Text = ownership;
                 txtBox4.Text = imageName;
 
-                // 4. Завантаження самого графічного файлу логотипу
                 if (string.IsNullOrWhiteSpace(imageName)) { ShowNoLogo(); return; }
 
                 imageName = imageName.Trim();
